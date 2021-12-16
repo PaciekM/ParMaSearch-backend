@@ -1,4 +1,3 @@
-import operator
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAdminUser
 from rest_framework import generics
@@ -37,7 +36,6 @@ def filter_data_title(value, data):
                         for numeric_string in title_vector]
         vectors_array.append(np.array(title_vector))
     model = Doc2Vec.load('./model-d2v.bin')
-    print(word_tokenize(value))
     value_vector = model.infer_vector(word_tokenize(value))
     embedding_matrix = np.zeros((1, 40))
     embedding_matrix[0] = value_vector
@@ -70,9 +68,9 @@ class SearchResults(generics.ListAPIView):
         type = self.request.query_params.get('type')
         if value is None:
             return self.queryset
-        if type is Search.TITLE:
-            return filter_data_title(value, Document.objects.all())
-        if type is Search.TEXT:
-            return filter_data_title(value, Document.objects.all())
-        if type is Search.MIX:
-            return filter_data_title(value, Document.objects.all())
+        # if type is Search.TITLE:
+        return filter_data_title(value, Document.objects.all())
+        # if type is Search.TEXT:
+        #     return filter_data_title(value, Document.objects.all())
+        # if type is Search.MIX:
+        #     return filter_data_title(value, Document.objects.all())
