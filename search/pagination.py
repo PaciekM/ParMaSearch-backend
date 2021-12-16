@@ -11,7 +11,7 @@ class SearchPagination(PageNumberPagination):
 
 
 class CustomPaginator(PageNumberPagination):
-    page_size = 18  # Number of objects to return in one page
+    page_size = 14  # Number of objects to return in one page
 
     def generate_response(self, query_set, serializer_obj, request):
         try:

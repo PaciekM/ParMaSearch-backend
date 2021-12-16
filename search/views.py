@@ -12,9 +12,16 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 import os
 from search.utils import cosine
 from sklearn.metrics.pairwise import cosine_similarity
-
+from enum import Enum
 
 # Create your views here.
+
+
+class Search(Enum):
+    TITLE = "TITLE"
+    TEXT = "TEXT"
+    MIX = "MIX"
+
 
 class IndexWithVal:
     def __init__(self, index, val):
@@ -30,7 +37,6 @@ def filter_data(value, data):
                         for numeric_string in title_vector]
         vectors_array.append(np.array(title_vector))
     model = Doc2Vec.load('./model-d2v.bin')
-    array_size = len(vectors_array)
     print(word_tokenize(value))
     value_vector = model.infer_vector(word_tokenize(value))
     embedding_matrix = np.zeros((1, 40))
@@ -54,7 +60,7 @@ class UserList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser]
 
 
-class ListUsers(generics.ListAPIView):
+class SearchResults(generics.ListAPIView):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     pagination_class = CustomPaginator
