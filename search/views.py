@@ -29,7 +29,7 @@ class IndexWithVal:
         self.index = index
 
 
-def filter_data(value, data):
+def filter_data_title(value, data):
     vectors_array = []
     for element in data:
         title_vector = element.title_vector.split(',')[:40]
@@ -67,7 +67,12 @@ class SearchResults(generics.ListAPIView):
 
     def get_queryset(self):
         value = self.request.query_params.get('value')
-
+        type = self.request.query_params.get('type')
         if value is None:
             return self.queryset
-        return filter_data(value, Document.objects.all())
+        if type is Search.TITLE:
+            return filter_data_title(value, Document.objects.all())
+        if type is Search.TEXT:
+            return filter_data_title(value, Document.objects.all())
+        if type is Search.MIX:
+            return filter_data_title(value, Document.objects.all())
