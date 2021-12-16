@@ -51,10 +51,10 @@ def run():
         if index == stop:
             break
     print('...Inserting data')
-    # for index, row in data.iterrows():
-    #     Document.objects.create(
-    #         title=row['title'], text=row['text'], subject=row['subject'], title_vector=listToString(title_vectors[index]), text_vector=listToString(text_vectors[index]))
-    #     if index == half:
-    #         print("Half of database seeded")
-    #     if index == stop:
-    #         break
+    for index, row in data.iterrows():
+        Document.objects.create(
+            title=row['title'], text=row['text'], subject=row['subject'], title_vector=listToString(title_vectors[index]), text_vector=listToString(text_vectors[index]))
+        if index == half:
+            print("Half of database seeded")
+        if index == stop:
+            break
