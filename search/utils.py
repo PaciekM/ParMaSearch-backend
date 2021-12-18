@@ -16,16 +16,16 @@ def cosine(u, v):
 
 
 def listToString(s):
-    print(len(s))
+    # print(len(s))
     # initialize an empty string
     result = ''
     e = 0
     for element in s:
-        print()
+        # print()
         result += str(element)+','
-        print(element)
+        # print(element)
         e = e + 1
-    print("============================")
-    print(e)
+    # print("============================")
+    # print(e)
 
     return result

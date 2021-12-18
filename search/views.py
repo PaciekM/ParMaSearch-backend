@@ -16,10 +16,12 @@ from enum import Enum
 # Create your views here.
 
 
-class Search(Enum):
+class Search(str, Enum):
     TITLE = "TITLE"
     TEXT = "TEXT"
     MIX = "MIX"
+    TITLE_TEXT = "TITLE_TEXT"
+    TEXT_TITLE = "TEXT_TITLE"
 
 
 class IndexWithVal:
@@ -48,7 +50,151 @@ def filter_data_title(value, data):
     result_cosine_with_index.sort(
         key=lambda x: x.val, reverse=True)
     for element in result_cosine_with_index:
-        print(element.val)
+        # print(element.val)
+        sorted_array.append(data[element.index])
+    return sorted_array
+
+def filter_data_text(value, data):
+    vectors_array = []
+    for element in data:
+        text_vector = element.text_vector.split(',')[:40]
+        text_vector = [float(numeric_string)
+                        for numeric_string in text_vector]
+        vectors_array.append(np.array(text_vector))
+    model = Doc2Vec.load('./model-d2v.bin')
+    value_vector = model.infer_vector(word_tokenize(value))
+    embedding_matrix = np.zeros((1, 40))
+    embedding_matrix[0] = value_vector
+    result_cosine = cosine_similarity(
+        vectors_array, np.array(np.array(embedding_matrix)))
+    result_cosine_with_index = []
+    for index, element in enumerate(result_cosine):
+        result_cosine_with_index.append(IndexWithVal(index, element[0]))
+    sorted_array = []
+    result_cosine_with_index.sort(
+        key=lambda x: x.val, reverse=True)
+    for element in result_cosine_with_index:
+        # print(element.val)
+        sorted_array.append(data[element.index])
+    return sorted_array
+
+def filter_data_mix(value, data):
+    vectors_array = dict()
+    vectors_array['title'] = []
+    vectors_array['text'] = []
+    for element in data:
+        title_vector = element.title_vector.split(',')[:40]
+        title_vector = [float(numeric_string)
+                        for numeric_string in title_vector]
+        vectors_array['title'].append(np.array(title_vector))
+
+        text_vector = element.text_vector.split(',')[:40]
+        text_vector = [float(numeric_string)
+                        for numeric_string in text_vector]
+        vectors_array['text'].append(np.array(text_vector))
+    
+    model = Doc2Vec.load('./model-d2v.bin')
+    value_vector = model.infer_vector(word_tokenize(value))
+    embedding_matrix = np.zeros((1, 40))
+    embedding_matrix[0] = value_vector
+
+    result_cosine = dict()
+    result_cosine['title'] = cosine_similarity(
+        vectors_array['title'], np.array(np.array(embedding_matrix)))
+
+    result_cosine['text'] = cosine_similarity(
+        vectors_array['text'], np.array(np.array(embedding_matrix)))
+
+    result_cosine_with_index = []
+    for index, element in enumerate(result_cosine['title']):
+        final_prob = element[0] * result_cosine['text'][index][0]
+        result_cosine_with_index.append(IndexWithVal(index, final_prob))
+
+    sorted_array = []
+    result_cosine_with_index.sort(
+        key=lambda x: x.val, reverse=True)
+    for element in result_cosine_with_index:
+        # print(element.val)
+        sorted_array.append(data[element.index])
+    return sorted_array
+
+def filter_data_title_text(value, data):
+    vectors_array = dict()
+    vectors_array['title'] = []
+    vectors_array['text'] = []
+    for element in data:
+        title_vector = element.title_vector.split(',')[:40]
+        title_vector = [float(numeric_string)
+                        for numeric_string in title_vector]
+        vectors_array['title'].append(np.array(title_vector))
+
+        text_vector = element.text_vector.split(',')[:40]
+        text_vector = [float(numeric_string)
+                        for numeric_string in text_vector]
+        vectors_array['text'].append(np.array(text_vector))
+    
+    model = Doc2Vec.load('./model-d2v.bin')
+    value_vector = model.infer_vector(word_tokenize(value))
+    embedding_matrix = np.zeros((1, 40))
+    embedding_matrix[0] = value_vector
+
+    result_cosine = dict()
+    result_cosine['title'] = cosine_similarity(
+        vectors_array['title'], np.array(np.array(embedding_matrix)))
+
+    result_cosine['text'] = cosine_similarity(
+        vectors_array['text'], np.array(np.array(embedding_matrix)))
+
+    result_cosine_with_index = []
+    for index, element in enumerate(result_cosine['title']):
+        final_prob = (element[0] * 0.7) + (result_cosine['text'][index][0] * 0.3)
+        result_cosine_with_index.append(IndexWithVal(index, final_prob))
+
+    sorted_array = []
+    result_cosine_with_index.sort(
+        key=lambda x: x.val, reverse=True)
+    for element in result_cosine_with_index:
+        # print(element.val)
+        sorted_array.append(data[element.index])
+    return sorted_array
+
+def filter_data_text_title(value, data):
+    vectors_array = dict()
+    vectors_array['title'] = []
+    vectors_array['text'] = []
+    for element in data:
+        title_vector = element.title_vector.split(',')[:40]
+        title_vector = [float(numeric_string)
+                        for numeric_string in title_vector]
+        vectors_array['title'].append(np.array(title_vector))
+
+        text_vector = element.text_vector.split(',')[:40]
+        text_vector = [float(numeric_string)
+                        for numeric_string in text_vector]
+        vectors_array['text'].append(np.array(text_vector))
+    
+    model = Doc2Vec.load('./model-d2v.bin')
+    value_vector = model.infer_vector(word_tokenize(value))
+    embedding_matrix = np.zeros((1, 40))
+    embedding_matrix[0] = value_vector
+
+    result_cosine = dict()
+    result_cosine['title'] = cosine_similarity(
+        vectors_array['title'], np.array(np.array(embedding_matrix)))
+
+    result_cosine['text'] = cosine_similarity(
+        vectors_array['text'], np.array(np.array(embedding_matrix)))
+
+    result_cosine_with_index = []
+    for index, element in enumerate(result_cosine['text']):
+        final_prob = (element[0] * 0.7) + (result_cosine['title'][index][0] * 0.3)
+        result_cosine_with_index.append(IndexWithVal(index, final_prob))
+
+    sorted_array = []
+    result_cosine_with_index.sort(
+        key=lambda x: x.val, reverse=True)
+    for element in result_cosine_with_index:
+        # print(element.val)
         sorted_array.append(data[element.index])
     return sorted_array
 
@@ -68,9 +214,21 @@ class SearchResults(generics.ListAPIView):
         type = self.request.query_params.get('type')
         if value is None:
             return self.queryset
-        # if type is Search.TITLE:
-        return filter_data_title(value, Document.objects.all())
-        # if type is Search.TEXT:
-        #     return filter_data_title(value, Document.objects.all())
-        # if type is Search.MIX:
-        #     return filter_data_title(value, Document.objects.all())
+        if type == Search.TITLE:
+            print('tajtul')
+            return filter_data_title(value, Document.objects.all())
+        if type == Search.TEXT:
+            print('degzd')
+            return filter_data_text(value, Document.objects.all())
+        if type == Search.TITLE_TEXT:
+            print('tajtul degzd')
+            return filter_data_title_text(value, Document.objects.all())
+        if type == Search.MIX:
+            print('migz')
+            return filter_data_mix(value, Document.objects.all())
+        if type == Search.TEXT_TITLE:
+            print('degzd tajtul')
+            return filter_data_text_title(value, Document.objects.all())
+        else:
+            print('ELZE')
+            return self.queryset

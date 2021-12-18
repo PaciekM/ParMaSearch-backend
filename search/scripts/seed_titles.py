@@ -47,7 +47,7 @@ def run():
         title_vectors.append(model.docvecs[i])
         text_vectors.append(model.docvecs[i+1])
     for index, row in data.iterrows():
-        listToString(title_vectors[index])
+        # listToString(title_vectors[index])
         if index == stop:
             break
     print('...Inserting data')

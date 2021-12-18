@@ -11,5 +11,5 @@ class DocumentSerializer(serializers.Serializer):
     # subject = serializers.CharField(max_length=50)
     title_vector = serializers.CharField(
         max_length=500)
-    # text_vector = serializers.CharField(
-    #     max_length=500)
+    text_vector = serializers.CharField(
+        max_length=500)
